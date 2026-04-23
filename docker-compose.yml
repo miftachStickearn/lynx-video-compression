@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3020:3020"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./outputs:/tmp/outputs
+    restart: unless-stopped

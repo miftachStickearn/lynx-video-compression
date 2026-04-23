@@ -1,0 +1,514 @@
+
+  <style>
+      .spinner {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        border: 3px solid #d1d5db;
+        border-top: 3px solid #284b96;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        vertical-align: middle;
+        margin-right: 10px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+    .info-alert {
+      display: flex;
+      align-items: center;
+      background: #f6f2fd;
+      border: 2px solid #b197fc;
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin-bottom: 18px;
+      font-size: 1.08rem;
+      color: #222;
+      box-sizing: border-box;
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .info-alert .info-icon {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      background: #a084e8;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      margin-right: 18px;
+      font-weight: bold;
+    }
+  </style>
+<!--
+Video Compression Service — /compress/percent Web UI
+Author: Copilot (production-ready, clean, modern, mobile-friendly)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Compression — /compress/percent Demo</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --bg: #f8fafc;
+      --card: #fff;
+      --border: #e5e7eb;
+      --text: #1e293b;
+      --muted: #64748b;
+      --error: #dc2626;
+      --success: #16a34a;
+      --radius: 12px;
+      --shadow: 0 2px 12px 0 rgba(30,41,59,0.07);
+    }
+    body {
+      background: var(--bg);
+      font-family: 'Inter', Arial, sans-serif;
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 980px;
+      width: 100%;
+      margin: 32px 0;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 48px 56px 40px 56px;
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .desc {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .input-group {
+      margin-bottom: 18px;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .file-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed #c3c8d4;
+      background: #fafbfc;
+      color: #64748b;
+      padding: 32px 0 24px 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+      min-height: 120px;
+      width: 100%;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .file-label.disabled {
+      opacity: 0.6;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+    .file-label:hover {
+      border-color: #284b96;
+      background: #f3f6fa;
+      color: #284b96;
+    }
+    .file-label .upload-icon {
+      font-size: 2.5rem;
+      color: #c3c8d4;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+    .file-label:hover .upload-icon {
+      color: #284b96;
+    }
+    .file-info {
+      font-size: 0.97rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .submit-btn {
+      width: 100%;
+      background: #284b96;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    .submit-btn:disabled {
+      background: #b0b6c3;
+      color: #fff;
+      cursor: not-allowed;
+    }
+    .submit-btn:hover:not(:disabled) {
+      background: #19305e;
+    }
+    .progress {
+      margin: 18px 0 8px 0;
+      text-align: center;
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .error {
+      color: var(--error);
+      background: #fee2e2;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 16px 0 0 0;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .media-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      overflow: hidden;
+      font-family: 'Inter', Arial, sans-serif;
+      margin-top: 8px;
+    }
+    .media-table th, .media-table td {
+      padding: 16px 12px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 15px;
+    }
+    .media-table th {
+      background: #fafbfc;
+      font-weight: 600;
+      color: #222;
+      letter-spacing: 0.01em;
+    }
+    .media-table tr:last-child td {
+      border-bottom: none;
+    }
+    .media-table .preview-thumb {
+      width: 60px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #f8f8f8;
+      border: 1px solid #eee;
+    }
+    .media-table .delete-btn {
+      color: #fff;
+      background: #284b96;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+      border-radius: 5px;
+      padding: 7px 18px;
+      transition: background 0.2s;
+    }
+    .media-table .delete-btn:hover {
+      background: #19305e;
+    }
+    .media-table .download-btn {
+      background: #284b96;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 7px 13px;
+      font-size: 0.98rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s;
+      text-decoration: none;
+      margin-left: 6px;
+      display: inline-block;
+    }
+    .media-table .download-btn:hover {
+      background: #19305e;
+    }
+    @media (max-width: 700px) {
+      .media-table th, .media-table td {
+        padding: 10px 6px;
+        font-size: 13px;
+      }
+      .media-table .preview-thumb {
+        width: 40px;
+        height: 28px;
+      }
+    }
+    @media (max-width: 600px) {
+      .container {
+        max-width: 98vw;
+        padding: 18px 4vw 18px 4vw;
+      }
+      h1 {
+        font-size: 1.18rem;
+      }
+    }
+    .optional {
+      color: var(--muted);
+      font-size: 0.97rem;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .note {
+      color: var(--muted);
+      font-size: 0.93rem;
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+
+    .header-flex {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 24px;
+    }
+    .lynx-logo {
+      width: 140px;
+      height: auto;
+      display: block;
+      margin-left: 32px;
+    }
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      flex: 1;
+    }
+        .header-text h1 {
+          font-size: 1.08rem;
+          font-weight: 500;
+          margin-bottom: 2px;
+          margin-top: 0;
+          text-align: left;
+          letter-spacing: 0.01em;
+          color: #222;
+        }
+        .header-text .desc {
+          color: #8a94a6;
+          font-size: 0.97rem;
+          font-weight: 400;
+          margin-bottom: 0;
+          margin-top: 0;
+          text-align: left;
+          letter-spacing: 0.01em;
+        }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-flex">
+      <div class="header-text">
+        <h1>Video Compression</h1>
+        <div class="desc">Compress video to 4 sizes variant</div>
+      </div>
+      <img src="lynx-logo.svg" alt="Lynx Logo" class="lynx-logo">
+    </div>
+        
+    <form id="compressForm" autocomplete="off">
+      <div class="input-group">
+        <label for="video">Video File <span style="color:var(--error);">*</span></label>
+        <label class="file-label" id="fileLabel" for="video">
+          <span class="upload-icon">&#8682;</span>
+          <span style="font-size:1.08rem;">Drop File to attach, or <span style="color:#284b96;text-decoration:underline;cursor:pointer;">Browse</span></span>
+          <span style="font-size:0.97rem;color:#b0b6c3;margin-top:6px;">Max size 500 MB</span>
+        </label>
+        <input type="file" id="video" name="video" accept="video/mp4,video/quicktime,video/x-msvideo,video/x-matroska,video/webm,video/mpeg" required>
+        <div class="file-info" id="fileInfo">No file selected</div>
+        <!-- <div class="note">Accepted: mp4, mov, avi, mkv, webm, mpeg. Max 500MB.</div> -->
+      </div>
+      <!-- No extra params for /compress/percent -->
+      <button type="submit" class="submit-btn" id="submitBtn">Compress Video</button>
+      <div class="progress" id="progress" style="display:none;">Uploading...</div>
+      <div class="error" id="errorMsg" style="display:none;"></div>
+    </form>
+    <div class="results" id="results" style="display:none;"></div>
+  </div>
+  <script>
+    // === CONFIG ===
+    const API_BASE_URL = 'http://localhost:3020'; // Change this if needed
+    const ENDPOINT = '/compress/percent';
+
+    // === DOM Elements ===
+    const form = document.getElementById('compressForm');
+    const videoInput = document.getElementById('video');
+    const fileLabel = document.getElementById('fileLabel');
+    const fileInfo = document.getElementById('fileInfo');
+    const submitBtn = document.getElementById('submitBtn');
+    const progress = document.getElementById('progress');
+    const errorMsg = document.getElementById('errorMsg');
+    const results = document.getElementById('results');
+
+    // === File Input Handling ===
+    // No need to manually trigger click, label[for] handles it natively
+    videoInput.addEventListener('change', () => {
+      if (videoInput.files.length > 0) {
+        const file = videoInput.files[0];
+        fileInfo.textContent = `${file.name} (${(file.size/1024/1024).toFixed(2)} MB)`;
+      } else {
+        fileInfo.textContent = 'No file selected';
+      }
+    });
+
+    // === Form Submission ===
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMsg.style.display = 'none';
+      results.style.display = 'none';
+      progress.style.display = 'block';
+      progress.innerHTML = '<span class="spinner"></span>Uploading...';
+      videoInput.disabled = true;
+      fileLabel.classList.add('disabled');
+      submitBtn.disabled = true;
+
+      // Validate file
+      if (videoInput.files.length === 0) {
+        showError('Please select a video file.');
+        return;
+      }
+      const file = videoInput.files[0];
+      if (file.size > 500 * 1024 * 1024) {
+        showError('File exceeds 500MB limit.');
+        return;
+      }
+
+      // Build FormData
+      const formData = new FormData();
+      formData.append('video', file);
+
+      try {
+        const response = await fetch(API_BASE_URL + ENDPOINT, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Compression failed.');
+        }
+        showResults(data.data);
+      } catch (err) {
+        showError(err.message || 'Request failed.');
+      } finally {
+        submitBtn.disabled = false;
+        progress.style.display = 'none';
+        progress.innerHTML = '';
+        videoInput.disabled = false;
+        fileLabel.classList.remove('disabled');
+      }
+    });
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+      progress.style.display = 'none';
+      progress.innerHTML = '';
+      videoInput.disabled = false;
+      fileLabel.classList.remove('disabled');
+      submitBtn.disabled = false;
+    }
+
+    function showResults(data) {
+      if (!data || !Array.isArray(data.variants)) {
+        showError('Malformed response from server.');
+        return;
+      }
+      let html = `<div class="info-alert"><span class="info-icon">!</span><span>If compression is <b>completed</b>, you can download the results below.</span></span></div>`;
+      html += '<div style="overflow-x:auto"><table class="media-table">';
+      html += '<tr>' +
+        '<th>NAME</th>' +
+        '<th>RESOLUTION</th>' +
+        '<th>BITRATE</th>' +
+        '<th>CODEC</th>' +
+        '<th>FRAMERATE</th>' +
+        '<th>SIZE</th>' +
+        '<th>OUTPUT</th>' +
+        '<th></th>' +
+        '</tr>';
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-GB').replace(/\//g, '-');
+      for (const v of data.variants) {
+        // Format bitrate (bps to kbps/mbps)
+        let bitrateStr = '';
+        if (typeof v.bitrate === 'number' && v.bitrate > 0) {
+          if (v.bitrate >= 1000000) bitrateStr = (v.bitrate/1000000).toFixed(2) + ' Mbps';
+          else if (v.bitrate >= 1000) bitrateStr = (v.bitrate/1000).toFixed(0) + ' kbps';
+          else bitrateStr = v.bitrate + ' bps';
+        }
+        let codecStr = v.codec ? v.codec.toUpperCase() : '';
+        let frStr = v.framerate ? (v.framerate % 1 === 0 ? v.framerate : v.framerate.toFixed(2)) + ' fps' : '';
+        html += '<tr>';
+        // Name
+        html += `<td>${v.filename || v.label || v.name || '-'}</td>`;
+        // Resolution
+        html += `<td>${v.resolution || '-'}</td>`;
+        // Bitrate
+        html += `<td>${bitrateStr || '-'}</td>`;
+        // Codec
+        html += `<td>${codecStr || '-'}</td>`;
+        // Framerate
+        html += `<td>${frStr || '-'}</td>`;
+        // Size
+        let sizeStr = '-';
+        if (typeof v.size === 'number' && v.size >= 0) {
+          if (v.size >= 1024 * 1024 * 1024) sizeStr = (v.size / (1024*1024*1024)).toFixed(2) + ' GB';
+          else if (v.size >= 1024 * 1024) sizeStr = (v.size / (1024*1024)).toFixed(2) + ' MB';
+          else if (v.size >= 1024) sizeStr = (v.size / 1024).toFixed(0) + ' KB';
+          else sizeStr = v.size + ' B';
+        }
+        html += `<td>${sizeStr}</td>`;
+        // Output (download link)
+        if (v.downloadUrl) {
+          html += `<td><a class="download-btn" href="${v.downloadUrl}" target="_blank">Download</a></td>`;
+        } else {
+          html += '<td>-</td>';
+        }
+        html += '</tr>';
+      }
+      html += '</table></div>';
+      results.innerHTML = html;
+      results.style.display = 'block';
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  </script>
+</body>
+</html>

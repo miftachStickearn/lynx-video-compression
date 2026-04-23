@@ -1,0 +1,24 @@
+
+FROM node:18-alpine
+
+# Install ffmpeg & ffprobe for all arch (x64/arm64)
+RUN apk add --no-cache ffmpeg
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install && npm cache clean --force
+
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+RUN mkdir -p /tmp/uploads /tmp/outputs /app/uploads /app/logs \
+    && chown -R nodejs:nodejs /tmp/uploads /tmp/outputs /app
+
+# src/ will be mounted as volume — no COPY needed
+USER nodejs
+
+ENV PORT=3020
+ENV NODE_ENV=development
+
+EXPOSE 3020
+
+CMD ["npx", "nodemon", "src/app.js"]

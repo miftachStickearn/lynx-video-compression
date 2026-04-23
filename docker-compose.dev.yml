@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3020:3020"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+    volumes:
+      - ./src:/app/src                  # hot-reload: perubahan src/ langsung terpakai
+      - ./outputs:/tmp/outputs          # output video muncul di host
